@@ -67,6 +67,13 @@
     (zip-entry zip-stream (io/file source-map)))
   (zip-below zip-stream (io/file "node_modules")))
 
+(defmethod stuff-zip :simple [zip-stream {:keys [output-to source-map]} {:keys [index-path]}]
+           (zip-entry zip-stream (io/file index-path) "index.js")
+           (zip-entry zip-stream (io/file output-to))
+           (when (string? source-map)
+                 (zip-entry zip-stream (io/file source-map)))
+           (zip-below zip-stream (io/file "node_modules")))
+
 (defn write-zip [{:keys [output-dir] :as compiler-opts}
                  {:keys [project-name zip-name resource-dirs] :as spec}]
   (let [zip-file (if (spec :force-path)

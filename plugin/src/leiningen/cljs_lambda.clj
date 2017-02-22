@@ -26,17 +26,18 @@
         :js-name (str (munge ns) "." (munge (name f)))})}))
 
 (defn- generate-index [env {:keys [optimizations source-map] :as compiler-opts} fns]
-  (let [template (slurp (io/resource
-                         (if (= optimizations :advanced)
-                           "index-advanced.mustache"
-                           "index.mustache")))]
-    (clostache.parser/render
-     template
-     (assoc compiler-opts
-       :source-map (when source-map true)
-       :module     (fns->module-template fns)
-       :env        (for [[k v] env]
-                     {:key k :value v})))))
+       (let [template (slurp (io/resource
+                               (case optimizations
+                                     :advanced "index-advanced.mustache"
+                                     :simple "index-simple.mustache"
+                                     "index-simple.mustache")))]
+            (clostache.parser/render
+              template
+              (assoc compiler-opts
+                     :source-map (when source-map true)
+                     :module (fns->module-template fns)
+                     :env (for [[k v] env]
+                               {:key k :value v})))))
 
 (defn- write-index [output-dir s]
   (let [file (io/file output-dir "index.js")]

@@ -1,0 +1,18 @@
+{{#source-map}}
+try {
+    require("source-map-support").install();
+} catch(err) {
+}
+{{/source-map}}
+
+{{#env}}
+process.env.{{key}} = "{{value}}";
+{{/#env}}
+
+var cljs_out = require("./{{output-to}}");
+
+{{#module}}
+{{#function}}
+exports.{{export}} = cljs_out.{{js-name}};
+{{/function}}
+{{/module}}
